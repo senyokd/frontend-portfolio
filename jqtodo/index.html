@@ -1,0 +1,155 @@
+<!DOCTYPE>
+<html lang="en">
+	<head>
+		<title>S To-Do App</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+		<link rel="stylesheet" href="jquery-ui.css">
+		<script src="jquery-ui.js"></script>
+		
+		
+		<style>
+			#container{
+				width:700px;
+				height:450px;
+				margin:70px auto;
+				border:2px solid rgb(125, 181, 66);
+			}
+			h2{
+				color: rgb(125, 181, 66);
+				text-align: center;
+			}
+			#projects{
+				width: 650px;
+				height: 250px;
+				margin: 0px auto;
+			}
+			ol li{
+				border: 1px dotted black;
+				cursor: pointer;
+				padding: 5px;
+				margin-bottom: 5px;
+			}    
+			ol li:hover{
+				background: #6eb7d6;
+			}
+			#btnAddProject{
+				margin-left: 540px;
+				margin-bottom: 20px;
+			}
+			#btnAddTask{
+				margin-left: 550px;
+				margin-top: 20px;
+			}
+			.ui-icon-close{
+				transform:scale(1.5);
+				cursor: pointer;
+			}
+		</style>
+		
+		<script>
+			$(document).ready(function(){
+				$("input[type=checkbox]").removeAttr("checked");
+				$("#projects").tabs();
+				$("ul").sortable({axis:"x", containment:"#projects"});
+				$("ol").sortable({axis:"y", containment:"#projects"});
+				$("#projects").on("click", "input[type=checkbox]", function(){
+					$(this).closest("li").slideUp(function(){
+						$(this).remove();
+					});
+				});
+				$("#projects").on("click", "span.ui-icon-close", function(){
+					var index = $(this).closest("li").index();
+					var id = $("#main li:eq(" + index + ") a").attr("href");
+					$("#main li:eq(" + index + ")").remove();
+					$(id).remove();
+					$("#projects").tabs("refresh");
+				});
+				$("#btnAddTask").button()
+				.click(function(){
+					$("#task-dialog").dialog({width:400, resizable:false, modal:true,
+						buttons:{
+							"Add new task": function(){
+							$("#projects").tabs("refresh");
+							var activeTab = $("#projects").tabs("option", "active");
+							var title = $("#main > li:nth-child(" + (activeTab+1) +") > a").attr("href");
+							$("#projects " + title).append("<li><input type='checkbox'>" + $("#new-task").val() +"</li>");
+							    $("#new-task").val("");
+							    $(this).dialog("close");
+							},
+							"Cancel":function(){
+								$("#new-task").val("");
+							    $(this).dialog("close");
+							}
+						}
+					});
+				});
+				$("#btnAddProject").button()
+				.click(function(){
+					$("#project-dialog").dialog({width:400, resizable:false, modal:true,
+					buttons:{
+						"Add new project":function(){
+							var projectName = $("#new-project").val();
+							var replaceName = projectName.split(" ").join("_")
+							$("<li><a href='#" + replaceName + "'>" + projectName +"</a></a><span class='ui-icon ui-icon-close'></span></li>")
+							.appendTo("#main");
+							$("<ol id='" + replaceName + "'></ol>").appendTo("#projects").sortable();
+							$("#projects").tabs("refresh");
+							var tabCount = $("#projects.ui-tabs-nav li").length;
+							$("#projects").tabs("option", "active", tabCount-1);
+							$("#new-project").val("");
+							$(this).dialog("close");
+						},
+						"Cancel":function(){
+							$("#new-project").val("");
+							$(this).dialog("close");
+						}
+					}
+					});
+				});
+			
+			});
+		
+		</script>
+		
+	</head>
+	<body>
+		<div id="container">
+			<h2> S To Do List</h2>
+			<button id="btnAddProject">Add Project</button>
+			<div id="projects">
+				<ul id="main">
+					<li><a href="#personal">Personal</a><span class="ui-icon ui-icon-close"></span></li>
+					<li><a href="#work">Work</a></a><span class="ui-icon ui-icon-close"></span></li>
+				</ul>
+				<ol id="personal">
+					<li><input type="checkbox">Watch animes</li>  
+					<li><input type="checkbox">Buy a watch</li> 
+				</ol>
+				<ol id="work">
+					<li><input type="checkbox">Learn React</li>  
+					<li><input type="checkbox">Get paid</li> 
+					<li><input type="checkbox">Learn New Things</li> 
+				</ol>
+			</div>
+			<button id="btnAddTask">Add Task</button>
+			<div id="project-dialog" title="Add a Project" style="display:none;">
+				<label for="new-project">Project name:</label><input id="new-project" type="text" />
+			
+			</div>
+			<div id="task-dialog" title="Add a Task" style="display:none;">
+				<label for="new-task">Task name:</label><input id="new-task" type="text" />
+			
+			</div>
+			
+			
+			
+			<br><br>
+			<footer style="text-align:center;  text-decoration: underline overline;">Website By Senyo Kodjo Dzantor</footer>
+		</div>
+		
+		
+		
+	</body>
+
+</html>
